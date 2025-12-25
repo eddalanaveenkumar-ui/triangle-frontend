@@ -1,0 +1,195 @@
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap');
+@import url('https://fonts.cdnfonts.com/css/billabong');
+
+:root {
+    --primary: #FF0000;
+    --secondary: #FD1D1D;
+    --accent: #833AB4;
+    --dark-bg: #0f0f0f;
+    --surface-dark: #1f1f1f;
+    --text-primary: #ffffff;
+    --text-secondary: #aaaaaa;
+    --border-color: #303030;
+    --hover-color: #272727;
+    --reels-gradient: linear-gradient(45deg, #405DE6, #5851DB, #833AB4, #C13584, #E1306C, #FD1D1D);
+    --header-height: 60px;
+    --nav-height: 60px;
+    --safe-area-top: env(safe-area-inset-top, 0px);
+    --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    --nav-bg: #ffffff;
+    --nav-text: #606060;
+    --nav-active: #FF0000;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background: #000;
+    overflow: hidden;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
+/* Main Feed Container */
+.videos-grid {
+    height: calc(100vh - var(--nav-height) - var(--safe-area-bottom));
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Full-Screen Video Card */
+.video-card {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    background-color: #000;
+}
+
+.video-player, .card-thumbnail {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Overlay for UI elements */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 20px;
+    padding-top: calc(20px + var(--safe-area-top));
+    background: linear-gradient(to top, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.4) 100%);
+    pointer-events: none; /* Allow clicks to pass through to video */
+}
+
+.video-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    pointer-events: auto;
+}
+
+.channel-avatar-small {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+.channel-name-small {
+    font-weight: 600;
+    font-size: 16px;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.video-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.video-info {
+    flex: 1;
+    min-width: 0;
+    pointer-events: auto;
+}
+
+.video-title {
+    font-weight: 600;
+    font-size: 16px;
+    margin: 0;
+    color: #fff;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.video-actions-vertical {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    pointer-events: auto;
+}
+
+.video-action-btn {
+    background: none;
+    border: none;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+.video-action-btn i {
+    font-size: 28px;
+}
+
+/* Mobile Navigation */
+.mobile-nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: calc(var(--nav-height) + var(--safe-area-bottom));
+    background-color: var(--nav-bg);
+    border-top: 1px solid var(--border-color);
+    padding-bottom: var(--safe-area-bottom);
+    z-index: 2000;
+}
+
+.mobile-nav-items {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+}
+
+.mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--nav-text);
+    text-decoration: none;
+    flex: 1;
+}
+
+.mobile-nav-item.active {
+    color: var(--nav-active);
+}
+
+.mobile-nav-item i {
+    font-size: 24px;
+    margin-bottom: 4px;
+    color: inherit;
+}
+
+.mobile-nav-item span {
+    font-size: 10px;
+    color: inherit;
+}
