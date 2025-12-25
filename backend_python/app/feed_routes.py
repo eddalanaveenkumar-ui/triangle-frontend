@@ -17,25 +17,24 @@ class FeedRequest(BaseModel):
     skip: int = 0
     is_short: Optional[bool] = None
 
-def _format_video(video):
+def _format_video_for_feed(video):
+    """
+    Formats the video document into the clean, minimal JSON required by the new frontend.
+    """
     return {
-        "id": video.get("video_id"),
+        "video_id": video.get("video_id"),
         "title": video.get("title"),
-        "thumbnail": video.get("thumbnail_url"),
-        "channel": video.get("channel_title"),
-        "views": video.get("view_count", 0),
+        "channel_name": video.get("channel_title"),
+        "profile_pic": f"https://ui-avatars.com/api/?name={video.get('channel_title', 'T')}&background=random", # Placeholder
         "likes": video.get("like_count", 0),
-        "published_at": video.get("published_at"),
-        "is_short": video.get("is_short", False),
-        "duration": video.get("duration", "PT0S")
+        "comments": video.get("comment_count", 0),
+        "shares": 0 # Placeholder, as YouTube API doesn't provide this
     }
 
 @router.post("/feed")
 def get_feed(request: FeedRequest):
     """
-    Gets a personalized feed.
-    - If is_short is True/False, it filters.
-    - If is_short is None, it returns a mixed feed.
+    Gets a personalized feed with multi-level fallback and pagination.
     """
     try:
         state = request.state
@@ -50,7 +49,6 @@ def get_feed(request: FeedRequest):
         projection = {"_id": 0}
         
         def build_query(base_query):
-            # Only add the is_short filter if it's explicitly provided
             if is_short is not None:
                 base_query["is_short"] = is_short
             return base_query
@@ -58,7 +56,6 @@ def get_feed(request: FeedRequest):
         def run_query(query):
             return list(videos_collection.find(query, projection).sort("viral_score", pymongo.DESCENDING).skip(skip).limit(limit))
 
-        # Build queries and run them
         if state and language:
             videos = run_query(build_query({"state": state, "language": language}))
         
@@ -78,7 +75,7 @@ def get_feed(request: FeedRequest):
 
         logger.info(f"Returning {len(videos)} videos")
         
-        formatted_videos = [_format_video(v) for v in videos]
+        formatted_videos = [_format_video_for_feed(v) for v in videos]
         return formatted_videos
 
     except Exception as e:
@@ -95,4 +92,4 @@ def get_video_details(video_id: str):
     if not video:
         raise HTTPException(status_code=404, detail="Video not found in database")
         
-    return _format_video(video)
+    return _format_video_for_feed(video)
